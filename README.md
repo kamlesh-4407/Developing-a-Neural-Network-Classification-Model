@@ -147,13 +147,12 @@ plt.show()
 
 ## Confusion Matrix
 
-Include confusion matrix here
+<img width="537" height="448" alt="Screenshot 2026-10-28 054058" src="https://github.com/user-attachments/assets/f65bd8cd-0852-4bcf-8192-2a45cc447c0a" />
 
 ## Classification Report
-Include classification report here
 
-### New Sample Data Prediction
-Include your sample input and output here
+<img width="441" height="210" alt="Screenshot 2026-10-28 054155" src="https://github.com/user-attachments/assets/3e69ab1e-ad29-4d17-bbb7-6131fdedc3b2" />
+
 
 ## RESULT
-Include your result here
+Thus, a neural network classification model was successfully developed, trained, and tested using PyTorch. The model was able to classify customers into the appropriate segments based on the given input features.

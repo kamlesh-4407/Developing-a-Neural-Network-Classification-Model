@@ -11,7 +11,9 @@ In their existing market, the sales team has classified all customers into 4 seg
 You are required to help the manager to predict the right group of the new customers.
 
 ## Neural Network Model
-Include the neural network model diagram.
+
+
+<img width="862" height="567" alt="Screenshot 2026-10-28 052353" src="https://github.com/user-attachments/assets/ec36f063-20e9-4803-b174-ac680898cb88" />
 
 ## DESIGN STEPS
 STEP 1 : Load the customer segmentation dataset and preprocess the data by removing unnecessary columns and handling missing values.
@@ -99,6 +101,39 @@ criterion=nn.CrossEntropyLoss()
 op=optim.Adam(model.parameters(),lr=0.001)
 
 epochs=100
+for i in range(epochs):
+    for a,b in trl:
+        op.zero_grad()
+        pred=model(a)
+        loss=criterion(pred,b.long())
+        loss.backward()
+        op.step()
+    if i%10==0:
+        print(f"Loss:{i}/{epochs}",loss.item())
+
+pre=[]
+act=[]
+with torch.no_grad():
+    output=model(xst)
+    _,predicted=torch.max(output,1)
+    pre.extend(predicted.numpy())
+    act.extend(yst.numpy())
+    print(act,pre)
+
+accuracy=accuracy_score(act,pre)
+conf_matrix=confusion_matrix(act,pre)
+cl_report=classification_report(act,pre,target_names=['A','B','C','D'])
+print("Accuracy:",accuracy)
+print("confusion_matrix:\n",conf_matrix)
+print("classification_report:\n",cl_report)
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+xl=['A','B','C','D']
+sns.heatmap(conf_matrix, annot=True, cmap='Blues', xticklabels=xl, yticklabels=xl,fmt='g')
+plt.xlabel("Predicted Labels")
+plt.ylabel("True Labels")
+plt.title("Confusion Matrix")
 plt.show()
 
 ```

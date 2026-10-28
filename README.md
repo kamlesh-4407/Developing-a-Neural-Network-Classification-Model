@@ -34,20 +34,72 @@ STEP 6 : Evaluate the trained model using accuracy, confusion matrix, classifica
 ### Register Number: 212224100029
 
 ```python
-class PeopleClassifier(nn.Module):
-    def __init__(self, input_size):
-        super(PeopleClassifier, self).__init__()
-        #Include your code here
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+from sklearn.preprocessing import LabelEncoder,StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score,confusion_matrix,classification_report
+from torch.utils.data import TensorDataset,DataLoader
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
+df=pd.read_csv("/customers.csv")
 
+df=df.drop(columns=["ID"])
 
-    def forward(self, x):
-        #Include your code here
-        
-# Initialize the Model, Loss Function, and Optimizer
+df.columns
 
-def train_model(model, train_loader, criterion, optimizer, epochs):
-    #Include your code here
+df.fillna({"Work_Experience":0,"Family_Size":df["Family_Size"].median()},inplace=True)
+
+cat_columns=['Gender','Ever_Married', 'Graduated', 'Profession',
+    'Spending_Score', 'Var_1']
+for col in cat_columns:
+    df[col]=LabelEncoder().fit_transform(df[col])
+
+lbe=LabelEncoder()
+df["Segmentation"]=lbe.fit_transform(df["Segmentation"])
+
+x=df.drop(columns="Segmentation")
+y=df["Segmentation"].values
+xt,xst,yt,yst=train_test_split(x,y,test_size=0.2,random_state=42)
+
+scaler=StandardScaler()
+xt=scaler.fit_transform(xt)
+xst=scaler.transform(xst)
+
+xt=torch.FloatTensor(xt)
+xst=torch.FloatTensor(xst)
+yt=torch.FloatTensor(yt)
+yst=torch.FloatTensor(yst)
+
+tr=TensorDataset(xt,yt)
+tst=TensorDataset(xst,yst)
+trl=DataLoader(tr,batch_size=16,shuffle=True)
+tstl=DataLoader(tst,batch_size=16)
+
+class classifier1(nn.Module):
+    def __init__(self,input_size):
+        super().__init__()
+        self.l1=nn.Linear(input_size,32)
+        self.l2=nn.Linear(32,16)
+        self.l3=nn.Linear(16,8)
+        self.l4=nn.Linear(8,4)
+    def forward(self,x):
+        x=F.relu(self.l1(x))
+        x=F.relu(self.l2(x))
+        x=F.relu(self.l3(x))
+        x=self.l4(x)
+        return x
+
+model=classifier1(input_size=xt.shape[1])
+criterion=nn.CrossEntropyLoss()
+op=optim.Adam(model.parameters(),lr=0.001)
+
+epochs=100
+plt.show()
 
 ```
 
